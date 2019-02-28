@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/dspencer-mawd/VueSocketTutorial#readme",
   "dependencies": {
+    "serialport": "^7.1.4",
     "socket.io": "^2.2.0"
   }
 }

@@ -1,6 +1,10 @@
 var http = require("http");
 var url = require('url');
 var fs = require('fs');
+
+var barcodeScan = require('./core/barcode/barcode-scan')
+barcodeScan.init('COM4', io)
+
 var server = http.createServer(function(request, response){
  var path = url.parse(request.url).pathname;
  switch(path){
