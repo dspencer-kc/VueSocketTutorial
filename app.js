@@ -1,9 +1,15 @@
 var http = require("http");
 var url = require('url');
 var fs = require('fs');
+const SerialPort = require('serialport')
+const Readline = require('@serialport/parser-readline')
+const port = new SerialPort('COM4')
+const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
 
-var barcodeScan = require('./core/barcode/barcode-scan')
-barcodeScan.init('COM4', io)
+
+
+//var barcodeScan = require('./core/barcode/barcode-scan')
+//barcodeScan.init('COM4', io)
 
 var server = http.createServer(function(request, response){
  var path = url.parse(request.url).pathname;
@@ -34,15 +40,17 @@ var server = http.createServer(function(request, response){
           break;
   }
 });
-server.listen(8000);
-// use socket.io
+
+//Call after server
 var io = require('socket.io').listen(server);
-//turn off debug
-io.set('log level', 1);
-// define interactions with client
-io.sockets.on('connection', function(socket){
-    //send data to client
-    setInterval(function(){
-        socket.emit('stream', {'title': "A new title via Socket.IO! HELLO"});
-    }, 1000);
-});
+server.listen(8000);
+
+    //Socket connected event fired
+    io.sockets.on('connection', function(socket){
+
+            //Barcode scan event fired
+            parser.on('data', function(data) {
+              console.log('Data:  ', data)
+              socket.emit('stream', {'title': data})
+            })
+    });
